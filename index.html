@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة تكلفة بناء العمارة</title>
+<style>
+  body {
+    font-family: "Tajawal", sans-serif;
+    background: #f3f4f6;
+    color: #222;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+  }
+  .calculator {
+    background: #fff;
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  label {
+    font-weight: bold;
+  }
+  input, select, button {
+    width: 100%;
+    margin: 8px 0 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+  }
+  button {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+  button:hover {
+    background-color: #2980b9;
+  }
+  .result {
+    background: #ecf0f1;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>💰 حاسبة تكلفة بناء العمارة</h1>
+
+<div class="calculator">
+  <label>نوع الوحدة:</label>
+  <select id="unitType">
+    <option value="leban">لبن</option>
+    <option value="qasb">قصب تعزي</option>
+  </select>
+
+  <label>عدد اللبن / القصب:</label>
+  <input type="number" id="unitCount" placeholder="مثال: 3">
+
+  <label>عدد الأدوار:</label>
+  <select id="floors">
+    <option value="1">دور واحد</option>
+    <option value="2">دورين</option>
+    <option value="3">ثلاثة أدوار</option>
+  </select>
+
+  <button onclick="calculate()">احسب التكلفة</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculate() {
+  const unitType = document.getElementById("unitType").value;
+  const unitCount = parseFloat(document.getElementById("unitCount").value);
+  const floors = parseInt(document.getElementById("floors").value);
+  const resultDiv = document.getElementById("result");
+
+  if (isNaN(unitCount) || unitCount <= 0) {
+    resultDiv.innerHTML = "⚠ يرجى إدخال عدد اللبن أو القصب بشكل صحيح.";
+    return;
+  }
+
+  // الخطوة الأولى: حساب مساحة الأرضية
+  const meterPerUnit = unitType === "leban" ? 44.44 : 20.25;
+  const landArea = unitCount * meterPerUnit;
+
+  // الخطوة الثانية: حساب مساحة البناء
+  const buildArea = landArea * 0.85;
+
+  // الخطوة الثالثة: تحديد تكلفة المتر حسب عدد الأدوار
+  let costPerMeter = 320;
+  if (floors === 2) costPerMeter = 290;
+  else if (floors === 3) costPerMeter = 270;
+
+  // حساب التكلفة الإجمالية بالدولار
+  const totalCostUSD = buildArea * floors * costPerMeter;
+
+  // تحويل إلى الريال السعودي (اختياري)
+  const exchangeRate = 3.75; // 1 دولار ≈ 3.75 ريال
+  const totalCostSAR = totalCostUSD * exchangeRate;
+
+  resultDiv.innerHTML = `
+    🧱 مساحة الأرضية: ${landArea.toFixed(1)} م²<br>
+    🏗 مساحة البناء: ${buildArea.toFixed(1)} م²<br>
+    💵 التكلفة التقديرية بالدولار: ${totalCostUSD.toLocaleString()} $<br>
+    🇸🇦 بالريال السعودي: ${totalCostSAR.toLocaleString()} ريال
+  `;
+}
+</script>
+
+</body>
+</html>
