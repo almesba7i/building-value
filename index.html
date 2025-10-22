@@ -3,121 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حاسبة تكلفة بناء العمارة</title>
+<title>حاسبة تكلفة بناء عمارة سكنية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    font-family: "Tajawal", sans-serif;
-    background: #f3f4f6;
-    color: #222;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #2c3e50;
-  }
-  .calculator {
-    background: #fff;
-    max-width: 450px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-  label {
-    font-weight: bold;
-  }
-  input, select, button {
-    width: 100%;
-    margin: 8px 0 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1em;
-  }
-  button {
-    background-color: #3498db;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-  }
-  button:hover {
-    background-color: #2980b9;
-  }
-  .result {
-    background: #ecf0f1;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 1.1em;
-    font-weight: bold;
-  }
+    /* متغيرات CSS لسهولة التعديل على الألوان */
+    :root {
+        --primary-color: #2c3e50; /* لون العنوان والخلفية */
+        --secondary-color: #3498db; /* لون الزر الأساسي */
+        --accent-color: #2980b9; /* لون الزر عند التحويم */
+        --bg-light: #f3f4f6; /* خلفية الصفحة */
+        --card-bg: #ffffff; /* خلفية البطاقة */
+        --result-bg: #ecf0f1; /* خلفية قسم النتيجة */
+    }
+
+    body {
+        font-family: 'Tajawal', sans-serif;
+        background: var(--bg-light);
+        color: var(--primary-color);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 25px;
+        font-size: 1.8em;
+    }
+
+    .calculator {
+        background: var(--card-bg);
+        max-width: 450px;
+        width: 100%;
+        margin: 10px auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 5px;
+        color: var(--primary-color);
+    }
+
+    input, select, button {
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+        box-sizing: border-box; /* لضمان أن العرض يشمل التبطين والحدود */
+    }
+    
+    /* تحسين شكل حقل الإدخال الرقمي */
+    input[type="number"] {
+        appearance: textfield; /* إزالة أسهم التعديل على بعض المتصفحات */
+    }
+
+    button {
+        background-color: var(--secondary-color);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: var(--accent-color);
+    }
+
+    .result {
+        background: var(--result-bg);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: right;
+        font-size: 1.1em;
+        font-weight: 700;
+        line-height: 1.8;
+        min-height: 100px; /* لضمان ثبات ارتفاع الحاوية */
+    }
+    
+    .footer-note {
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #7f8c8d;
+        text-align: center;
+    }
+    
+    /* تحسين تصميم النتيجة */
+    .result span {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
 </style>
 </head>
 <body>
 
-<h1>💰 حاسبة تكلفة بناء العمارة</h1>
+<h1>💰 حاسبة تكلفة بناء عمارة سكنية</h1>
 
 <div class="calculator">
-  <label>نوع الوحدة:</label>
-  <select id="unitType">
-    <option value="leban">لبن</option>
-    <option value="qasb">قصب تعزي</option>
-  </select>
+    
+    <label for="unitType">نوع وحدة القياس:</label>
+    <select id="unitType">
+        <option value="leban">لبن (44.44 م² تقريباً)</option>
+        <option value="qasb">قصب تعزي (20.25 م² تقريباً)</option>
+    </select>
 
-  <label>عدد اللبن / القصب:</label>
-  <input type="number" id="unitCount" placeholder="مثال: 3">
+    <label for="unitCount">عدد الوحدات (لبن / قصب):</label>
+    <input type="number" id="unitCount" placeholder="مثال: 3 وحدات">
 
-  <label>عدد الأدوار:</label>
-  <select id="floors">
-    <option value="1">دور واحد</option>
-    <option value="2">دورين</option>
-    <option value="3">ثلاثة أدوار</option>
-  </select>
+    <label for="floors">عدد الأدوار المراد بناؤها:</label>
+    <select id="floors">
+        <option value="1">دور واحد</option>
+        <option value="2">دورين</option>
+        <option value="3">ثلاثة أدوار</option>
+        <option value="4">أربعة أدوار</option>
+    </select>
 
-  <button onclick="calculate()">احسب التكلفة</button>
+    <button onclick="calculate()">🚀 احسب التكلفة التقديرية</button>
 
-  <div class="result" id="result"></div>
+    <div class="result" id="result">
+        النتائج ستظهر هنا بعد الإدخال والضغط على زر "احسب".
+    </div>
+</div>
+
+<div class="footer-note">
+    **ملاحظة:** هذه التكاليف تقديرية وقد تختلف بناءً على عوامل متعددة.
+    <br>
+    إعداد المهندس إبراهيم المصباحي
 </div>
 
 <script>
+/**
+ * دالة لحساب التكلفة التقديرية للبناء
+ */
 function calculate() {
-  const unitType = document.getElementById("unitType").value;
-  const unitCount = parseFloat(document.getElementById("unitCount").value);
-  const floors = parseInt(document.getElementById("floors").value);
-  const resultDiv = document.getElementById("result");
+    // 1. استخراج القيم من عناصر الإدخال
+    const unitType = document.getElementById("unitType").value;
+    const unitCount = parseFloat(document.getElementById("unitCount").value);
+    const floors = parseInt(document.getElementById("floors").value, 10); // إضافة radix 10
+    const resultDiv = document.getElementById("result");
+    
+    // 2. التحقق من صحة الإدخال
+    if (isNaN(unitCount) || unitCount <= 0) {
+        resultDiv.innerHTML = "<span style='color: #e74c3c;'>⚠️ خطأ: يرجى إدخال عدد الوحدات (لبن/قصب) بشكل صحيح وموجب.</span>";
+        return;
+    }
 
-  if (isNaN(unitCount) || unitCount <= 0) {
-    resultDiv.innerHTML = "⚠ يرجى إدخال عدد اللبن أو القصب بشكل صحيح.";
-    return;
-  }
+    // 3. تحديد قيم الثوابت والتبادل
+    const EXCHANGE_RATE_SAR = 3.75; // 1 دولار ≈ 3.75 ريال
+    
+    // تحديد مساحة المتر لكل وحدة
+    const METER_PER_UNIT = unitType === "leban" ? 44.44 : 20.25;
+    
+    // تحديد تكلفة المتر المربع بالدولار حسب عدد الأدوار
+    // يمكن توسيع هذه القائمة لتشمل المزيد من الأدوار أو مستويات الجودة
+    let costPerMeterUSD = 320; // الافتراضي: دور واحد
+    if (floors === 2) {
+        costPerMeterUSD = 290;
+    } else if (floors === 3) {
+        costPerMeterUSD = 270;
+    } else if (floors >= 4) { // افتراض: تكلفة ثابتة أو أقل للأدوار الأعلى
+        costPerMeterUSD = 250; 
+    }
 
-  // الخطوة الأولى: حساب مساحة الأرضية
-  const meterPerUnit = unitType === "leban" ? 44.44 : 20.25;
-  const landArea = unitCount * meterPerUnit;
+    // 4. إجراء الحسابات
+    
+    // الخطوة الأولى: حساب مساحة الأرضية الكلية (بالأمتار المربعة)
+    const landArea = unitCount * METER_PER_UNIT;
 
-  // الخطوة الثانية: حساب مساحة البناء
-  const buildArea = landArea * 0.85;
+    // الخطوة الثانية: حساب مساحة البناء لكل دور (بافتراض 85% استغلال)
+    // يمكن تغيير نسبة الاستغلال هذه حسب الحاجة (مثل 0.85)
+    const buildingAreaPerFloor = landArea * 0.85;
 
-  // الخطوة الثالثة: تحديد تكلفة المتر حسب عدد الأدوار
-  let costPerMeter = 320;
-  if (floors === 2) costPerMeter = 290;
-  else if (floors === 3) costPerMeter = 270;
+    // الخطوة الثالثة: حساب التكلفة الإجمالية
+    // التكلفة الإجمالية = (مساحة البناء للدور الواحد) * (عدد الأدوار) * (تكلفة المتر)
+    const totalCostUSD = buildingAreaPerFloor * floors * costPerMeterUSD;
+    const totalCostSAR = totalCostUSD * EXCHANGE_RATE_SAR;
 
-  // حساب التكلفة الإجمالية بالدولار
-  const totalCostUSD = buildArea * floors * costPerMeter;
-
-  // تحويل إلى الريال السعودي (اختياري)
-  const exchangeRate = 3.75; // 1 دولار ≈ 3.75 ريال
-  const totalCostSAR = totalCostUSD * exchangeRate;
-
-  resultDiv.innerHTML = `
-    🧱 مساحة الأرضية: ${landArea.toFixed(1)} م²<br>
-    🏗 مساحة البناء: ${buildArea.toFixed(1)} م²<br>
-    💵 التكلفة التقديرية بالدولار: ${totalCostUSD.toLocaleString()} $<br>
-    🇸🇦 بالريال السعودي: ${totalCostSAR.toLocaleString()} ريال
-  `;
+    // 5. عرض النتائج
+    resultDiv.innerHTML = `
+        <span>**🧱 مساحة الأرضية الكلية:** ${landArea.toFixed(2).toLocaleString()} م²</span>
+        <span>**🏗 مساحة البناء التقديرية لكل دور:** ${buildingAreaPerFloor.toFixed(2).toLocaleString()} م²</span>
+        <span>**💵 التكلفة التقديرية الكلية بالدولار:** ${totalCostUSD.toFixed(0).toLocaleString()} $</span>
+        <span>**🇸🇦 التكلفة التقديرية الكلية بالريال السعودي:** ${totalCostSAR.toFixed(0).toLocaleString()} ريال</span>
+    `;
 }
 </script>
 
